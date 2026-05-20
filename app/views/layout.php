@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/" type="image/x-icon">
     <title>Embee Tech | Soluções em TI</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script defer src="js/script.js"></script>
 </head>
 <body class="bg-gradient-to-br from-purple-950 via-purple-900 to-violet-950 text-slate-100 overflow-x-hidden">
     <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_left,_rgba(245,158,11,0.15),_transparent_40%),radial-gradient(ellipse_at_bottom_right,_rgba(168,85,247,0.12),_transparent_50%)]"></div>
@@ -14,8 +15,12 @@
         <aside class="w-80 hidden lg:flex flex-col justify-between border-r border-purple-800 bg-purple-950/90 backdrop-blur-2xl px-8 py-10">
             <div>
                 <div class="mb-10">
-                    <div class="text-4xl font-black tracking-tight text-amber-400">embee</div>
-                    <div class="text-sm uppercase text-slate-400">tecnologia</div>
+                    <a href="/">
+                        <div class="text-4xl font-black tracking-tight text-amber-400">embee
+                            <img src="img/logo.png" alt="Embee Tech" class="absolute top-5 w-12 h-12 -mt-1 ml-2">
+                        </div>
+                        <div class="text-sm uppercase text-slate-400">tecnologia</div>
+                    </a>
                 </div>
                 <nav class="space-y-4">
                     <a href="index.php" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'home' ? 'bg-amber-500/20' : 'bg-slate-900/80' ?> hover:bg-amber-500/20 transition">Início</a>

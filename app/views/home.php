@@ -1,7 +1,7 @@
-<section id="home" class="min-h-screen relative overflow-hidden">
-    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80')] bg-cover bg-center opacity-20"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-purple-950/90 via-purple-950/70 to-purple-950"></div>
-    <div class="relative z-10">
+<section id="home" class="min-h-screen relative overflow-visible">
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1400&q=80')] bg-cover bg-center opacity-20 rounded-[2rem] shadow-[0_10px_20px_5px_#000000]"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-purple-950/90 via-purple-950/70 to-purple-950/50 border-amber-400/20 rounded-[2rem]"></div>
+    <div class="relative z-10 p-10 rounded-[5rem]">
         <div class="flex flex-col xl:flex-row items-start justify-between gap-10">
             <div class="max-w-3xl">
                 <span class="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-4 py-2 text-sm uppercase tracking-[0.2em] text-amber-400">Embee Tech</span>
