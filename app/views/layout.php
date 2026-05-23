@@ -17,7 +17,7 @@
                 <div class="mb-10">
                     <a href="/">
                         <div class="text-4xl font-black tracking-tight text-amber-400">embee
-                            <img src="img/logo.png" alt="Embee Tech" class="absolute top-5 w-12 h-12 -mt-1 ml-2">
+                            <img src="img/logo.png" alt="Embee Tech" class="absolute top-5 w-12 h-12 -mt-1 ml-2 animate-bee">
                         </div>
                         <div class="text-sm uppercase text-slate-400">tecnologia</div>
                     </a>
