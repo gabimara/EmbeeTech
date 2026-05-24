@@ -1,3 +1,20 @@
+/* Criando o movimento de voo circular */
+  @keyframes vooDaAbelha {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    60% {
+      transform: translate(100px, 0px) rotate(180deg);
+    }
+    100% {
+      transform: translate(0, 0) rotate(360deg);
+    }
+  }
+
+  .animate-bee:hover {
+    animation: vooDaAbelha 2.0s ease-in-out forwards;
+  }
+
 body {
     font-family: 'Inter', system-ui, sans-serif;
     background: linear-gradient(135deg, #581c87 0%, #6d28d9 25%, #7c3aed 50%, #6d28d9 75%, #581c87 100%);
