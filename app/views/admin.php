@@ -11,6 +11,37 @@
             </div>
         </div>
 
+        <div class="mt-6 rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+            <h3 class="text-2xl font-bold text-white">Cadastrar Administrador</h3>
+            <p class="mt-2 text-slate-400">Crie novas contas de administrador diretamente pelo painel.</p>
+            <form action="index.php" method="post" class="mt-6 space-y-4">
+                <input type="hidden" name="action" value="create_admin">
+                <div class="grid gap-4 md:grid-cols-2">
+                    <label class="block text-slate-300">
+                        <span>Nome completo</span>
+                        <input type="text" name="name" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="Nome do administrador" required>
+                    </label>
+                    <label class="block text-slate-300">
+                        <span>Email</span>
+                        <input type="email" name="email" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="admin@exemplo.com" required>
+                    </label>
+                </div>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <label class="block text-slate-300">
+                        <span>Senha</span>
+                        <input type="password" name="password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="••••••••" required>
+                    </label>
+                    <label class="block text-slate-300">
+                        <span>Confirmar senha</span>
+                        <input type="password" name="confirm_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="••••••••" required>
+                    </label>
+                </div>
+                <div class="flex">
+                    <button type="submit" class="ml-auto rounded-full bg-amber-400 px-6 py-3 font-semibold text-slate-950 hover:bg-amber-300 transition">Criar administrador</button>
+                </div>
+            </form>
+        </div>
+
         <div class="grid gap-6 lg:grid-cols-2">
             <div class="rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
                 <h3 class="text-2xl font-bold text-white">Categorias</h3>
@@ -30,8 +61,18 @@
             </div>
         </div>
 
+        <?php $showArchived = isset($_GET['archived']) && $_GET['archived'] === '1'; ?>
         <div class="mt-10 overflow-x-auto rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
-            <h3 class="text-2xl font-bold text-white">Chamados em aberto</h3>
+            <div class="flex items-center justify-between">
+                <h3 class="text-2xl font-bold text-white"><?= $showArchived ? 'Arquivados' : 'Chamados em aberto' ?></h3>
+                <div>
+                    <?php if ($showArchived): ?>
+                        <a href="index.php?page=admin" class="rounded-full border border-purple-700 bg-slate-900 px-4 py-2 text-sm text-slate-200 hover:border-amber-400 transition">Voltar</a>
+                    <?php else: ?>
+                        <a href="index.php?page=admin&archived=1" class="rounded-full border border-purple-700 bg-slate-900 px-4 py-2 text-sm text-slate-200 hover:border-amber-400 transition">Mostrar arquivados</a>
+                    <?php endif; ?>
+                </div>
+            </div>
             <div class="mt-6 min-w-full overflow-hidden rounded-3xl border border-purple-800">
                 <table class="min-w-full text-left text-sm text-slate-300">
                     <thead class="bg-purple-950/95 text-slate-400">
@@ -57,30 +98,127 @@
                                 <td class="px-6 py-5 text-amber-400"><?= htmlspecialchars($ticket['status']) ?></td>
                                 <td class="px-6 py-5"><?= htmlspecialchars($ticket['created_at']) ?></td>
                                 <td class="px-6 py-5"><?= htmlspecialchars($ticket['assigned_to'] ?? 'Não atribuído') ?></td>
+                                <?php
+                                    $detailsText = $ticket['details'];
+                                    $responseText = '';
+                                    // Support both old and new response formats
+                                    $markerPos = strpos($detailsText, "\n\nResposta do admin:");
+                                    if ($markerPos === false) {
+                                        $markerPos = strpos($detailsText, "\n\nResposta de ");
+                                    }
+                                    if ($markerPos !== false) {
+                                        $responsePart = substr($detailsText, $markerPos + 2);
+                                        // try to remove the marker from details
+                                        $detailsText = substr($detailsText, 0, $markerPos);
+                                        // remove leading marker text for response display
+                                        $responseText = trim($responsePart);
+                                    }
+
+                                    $ticketData = htmlspecialchars(json_encode([
+                                        'id' => $ticket['id'],
+                                        'title' => $ticket['title'],
+                                        'category' => $ticket['category_name'],
+                                        'service_type' => $ticket['service_type_name'],
+                                        'status' => $ticket['status'],
+                                        'created_at' => $ticket['created_at'],
+                                        'assigned_to' => $ticket['assigned_to'] ?? 'Administrador',
+                                        'details' => trim($detailsText),
+                                        'response' => trim($responseText),
+                                    ], JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+                                ?>
                                 <td class="px-6 py-5">
-                                    <details class="rounded-3xl border border-purple-800 bg-purple-950/80 p-4">
-                                        <summary class="cursor-pointer font-medium text-slate-200">Editar</summary>
-                                        <form action="index.php" method="post" class="mt-4 space-y-3">
-                                            <input type="hidden" name="action" value="update_ticket">
-                                            <input type="hidden" name="ticket_id" value="<?= htmlspecialchars($ticket['id']) ?>">
-                                            <select name="status" class="w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400">
-                                                <option value="Aberto" <?= $ticket['status'] === 'Aberto' ? 'selected' : '' ?>>Aberto</option>
-                                                <option value="Em andamento" <?= $ticket['status'] === 'Em andamento' ? 'selected' : '' ?>>Em andamento</option>
-                                                <option value="Concluído" <?= $ticket['status'] === 'Concluído' ? 'selected' : '' ?>>Concluído</option>
-                                            </select>
-                                            <label class="block text-slate-300">
-                                                <span>Responsável</span>
-                                                <input type="text" name="assigned_to" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400" value="<?= htmlspecialchars($ticket['assigned_to'] ?? 'Administrador') ?>">
-                                            </label>
-                                            <button type="submit" class="w-full rounded-full bg-violet-500 px-4 py-3 font-semibold text-white hover:bg-violet-400 transition">Atualizar</button>
-                                        </form>
-                                    </details>
+                                    <button type="button" data-ticket='<?= $ticketData ?>' class="open-ticket-modal w-full rounded-3xl border border-purple-800 bg-purple-950/80 px-4 py-3 text-left text-slate-200 transition hover:bg-purple-900/90">Ver / Responder</button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div id="ticketModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4">
+        <div class="relative w-full max-w-3xl max-h-[90vh] overflow-hidden overflow-y-auto rounded-[2rem] border border-purple-800 bg-purple-950/95 p-6 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+            <button id="closeTicketModal" type="button" class="absolute right-5 top-5 rounded-full bg-purple-900/80 px-4 py-2 text-sm text-slate-200 hover:bg-purple-900 transition">Fechar</button>
+            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Detalhes do chamado</p>
+                    <h3 id="modalTicketTitle" class="mt-3 text-3xl font-extrabold text-white"></h3>
+                </div>
+                <div id="modalTicketStatus" class="rounded-full bg-amber-500/10 px-4 py-2 text-amber-200 text-sm"></div>
+            </div>
+            <div class="grid gap-4 md:grid-cols-2 mb-6 text-slate-300">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Categoria</p>
+                    <p id="modalTicketCategory" class="mt-2 text-white"></p>
+                </div>
+                <div>
+                    <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Tipo de serviço</p>
+                    <p id="modalTicketType" class="mt-2 text-white"></p>
+                </div>
+                <div>
+                    <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Abertura</p>
+                    <p id="modalTicketCreatedAt" class="mt-2 text-white"></p>
+                </div>
+                <div>
+                    <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Atribuído</p>
+                    <p id="modalTicketAssignedTo" class="mt-2 text-white"></p>
+                </div>
+            </div>
+            <div class="space-y-4 mb-6">
+                <div>
+                    <p class="font-semibold text-white">Pedido</p>
+                    <div id="modalTicketDetails" class="whitespace-pre-line mt-3 rounded-3xl border border-purple-800 bg-purple-900/80 p-4 text-slate-200"></div>
+                </div>
+                <div id="modalTicketResponseWrapper" class="hidden rounded-3xl border border-violet-600/20 bg-violet-500/5 p-4">
+                    <p class="font-semibold text-violet-200">Resposta do admin</p>
+                    <div id="modalTicketResponse" class="whitespace-pre-line mt-3 text-slate-200"></div>
+                </div>
+            </div>
+            <form id="modalTicketForm" action="index.php" method="post" class="space-y-4">
+                <input type="hidden" name="action" value="update_ticket">
+                <input type="hidden" id="modalTicketId" name="ticket_id" value="">
+                <div class="grid gap-4 md:grid-cols-2">
+                    <div>
+                        <label class="block text-slate-300">
+                            <span>Status</span>
+                            <select id="modalTicketStatusSelect" name="status" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400">
+                                <option value="Aberto">Aberto</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Concluído">Concluído</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300">
+                            <span>Responsável</span>
+                            <input id="modalTicketAssignedToInput" type="text" disabled class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950/60 px-4 py-3 text-slate-200 outline-none" placeholder="Administrador">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-slate-300">
+                            <span>Quem está respondendo</span>
+                            <select name="responder_id" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400">
+                                <option value="">Selecione (opcional)</option>
+                                <?php if (!empty($admins)): ?>
+                                    <?php foreach ($admins as $admin): ?>
+                                        <option value="<?= (int) $admin['id'] ?>"><?= htmlspecialchars($admin['name']) ?> (<?= htmlspecialchars($admin['email']) ?>)</option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <label class="block text-slate-300">
+                    <span>Resposta do admin</span>
+                    <textarea id="modalTicketResponseInput" name="admin_response" rows="4" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400" placeholder="Adicione uma resposta ou comentário para o cliente."></textarea>
+                </label>
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <button type="submit" class="w-full rounded-full bg-violet-500 px-4 py-3 font-semibold text-white hover:bg-violet-400 transition">Atualizar</button>
+                    <button id="modalCancelTicket" type="button" class="w-full rounded-full bg-red-500 px-4 py-3 font-semibold text-slate-950 hover:bg-red-400 transition">Cancelar e arquivar</button>
+                </div>
+            </form>
         </div>
     </div>
 </section>

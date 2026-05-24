@@ -17,6 +17,9 @@ unset($_SESSION['flash'], $_SESSION['flash_error']);
 
 User::seedDefaults();
 Ticket::seedDefaults();
+Ticket::cleanupOldArchivedTickets();
+// Normalize status values in DB to canonical forms (idempotent)
+Ticket::normalizeExistingStatuses();
 
 $page = $_GET['page'] ?? 'home';
 $action = $_POST['action'] ?? null;
@@ -31,6 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'register') {
+        $authController->register();
+        exit;
+    }
+
     if ($action === 'logout') {
         $authController->logout();
         exit;
@@ -41,8 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'create_admin') {
+        $homeController->createAdmin();
+        exit;
+    }
+
     if ($action === 'update_ticket') {
         $ticketController->update();
+        exit;
+    }
+
+    if ($action === 'cancel_ticket') {
+        $ticketController->cancel();
         exit;
     }
 }

@@ -11,27 +11,49 @@
 </head>
 <body class="bg-gradient-to-br from-purple-950 via-purple-900 to-violet-950 text-slate-100 overflow-x-hidden">
     <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_left,_rgba(245,158,11,0.15),_transparent_40%),radial-gradient(ellipse_at_bottom_right,_rgba(168,85,247,0.12),_transparent_50%)]"></div>
-    <div class="min-h-screen flex">
+    <div class="min-h-screen flex flex-col lg:flex-row">
+        <div class="lg:hidden w-full bg-purple-950/95 border-b border-purple-800 px-6 py-4">
+            <div class="flex items-center justify-between gap-4">
+                <a href="index.php" class="logo-link inline-flex items-center gap-3 text-amber-400">
+                    <div class="text-2xl font-black tracking-tight">embee</div>
+                    <img src="img/logo.png" alt="Embee Tech" class="w-10 h-10 bee-icon">
+                </a>
+                <button id="mobileMenuToggle" class="rounded-3xl border border-purple-800 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 font-semibold">Menu</button>
+            </div>
+            <nav id="mobileMenu" class="mt-4 hidden space-y-3">
+                <a href="index.php" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'home' ? 'bg-amber-500/20' : 'bg-slate-900/80' ?> hover:bg-amber-500/20 transition">Início</a>
+                <?php if ($currentUser): ?>
+                    <a href="index.php?page=tickets" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'tickets' ? 'bg-violet-500/20' : 'bg-slate-900/80' ?> hover:bg-violet-500/20 transition">Chamados</a>
+                <?php endif; ?>
+                <?php if ($currentUser && $currentUser['role'] === 'admin'): ?>
+                    <a href="index.php?page=admin" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'admin' ? 'bg-emerald-500/20' : 'bg-slate-900/80' ?> hover:bg-emerald-500/20 transition">Admin</a>
+                <?php endif; ?>
+            </nav>
+        </div>
+
         <aside class="w-80 hidden lg:flex flex-col justify-between border-r border-purple-800 bg-purple-950/90 backdrop-blur-2xl px-8 py-10">
             <div>
                 <div class="mb-10">
-                    <a href="/">
-                        <div class="text-4xl font-black tracking-tight text-amber-400">embee
-                            <img src="img/logo.png" alt="Embee Tech" class="absolute top-5 w-12 h-12 -mt-1 ml-2 animate-bee">
+                    <a href="index.php" class="logo-link">
+                        <div class="text-4xl font-black tracking-tight text-amber-400 relative inline-flex items-center">
+                            embee
+                            <img src="img/logo.png" alt="Embee Tech" class="absolute top-0 left-full ml-2 w-12 h-12 bee-icon">
                         </div>
                         <div class="text-sm uppercase text-slate-400">tecnologia</div>
                     </a>
                 </div>
                 <nav class="space-y-4">
                     <a href="index.php" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'home' ? 'bg-amber-500/20' : 'bg-slate-900/80' ?> hover:bg-amber-500/20 transition">Início</a>
-                    <a href="index.php?page=tickets" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'tickets' ? 'bg-violet-500/20' : 'bg-slate-900/80' ?> hover:bg-violet-500/20 transition">Chamados</a>
+                    <?php if ($currentUser): ?>
+                        <a href="index.php?page=tickets" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'tickets' ? 'bg-violet-500/20' : 'bg-slate-900/80' ?> hover:bg-violet-500/20 transition">Chamados</a>
+                    <?php endif; ?>
                     <?php if ($currentUser && $currentUser['role'] === 'admin'): ?>
                         <a href="index.php?page=admin" class="menu-link block rounded-2xl px-4 py-3 <?= $page === 'admin' ? 'bg-emerald-500/20' : 'bg-slate-900/80' ?> hover:bg-emerald-500/20 transition">Admin</a>
                     <?php endif; ?>
                 </nav>
             </div>
             <div class="space-y-3">
-                <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-[0_0_60px_rgba(245,158,11,0.1)]"></
+                <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-5 shadow-[0_0_60px_rgba(245,158,11,0.1)]">
                     <p class="text-sm uppercase tracking-[0.3em] text-slate-400">Olá</p>
                     <?php if ($currentUser): ?>
                         <p class="mt-3 text-lg font-semibold text-white"><?= htmlspecialchars($currentUser['name']) ?></p>

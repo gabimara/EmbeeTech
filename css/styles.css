@@ -1,19 +1,24 @@
-/* Criando o movimento de voo circular */
-  @keyframes vooDaAbelha {
-    0% {
-      transform: translate(0, 0) rotate(0deg);
-    }
-    60% {
-      transform: translate(100px, 0px) rotate(180deg);
-    }
-    100% {
-      transform: translate(0, 0) rotate(360deg);
-    }
-  }
+/* Movimento em 8 da abelha */
+.bee-icon {
+    transform-origin: center;
+    animation: bee-flight 6s ease-in-out infinite;
+    will-change: transform;
+}
 
-  .animate-bee:hover {
-    animation: vooDaAbelha 2.0s ease-in-out forwards;
-  }
+.logo-link:hover .bee-icon {
+    animation-duration: 3s;
+}
+
+@keyframes bee-flight {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    12.5% { transform: translate(18px, -12px) rotate(35deg); }
+    25% { transform: translate(36px, 0px) rotate(80deg); }
+    37.5% { transform: translate(18px, 12px) rotate(125deg); }
+    50% { transform: translate(0, 0) rotate(180deg); }
+    62.5% { transform: translate(-18px, -12px) rotate(215deg); }
+    75% { transform: translate(-36px, 0px) rotate(260deg); }
+    87.5% { transform: translate(-18px, 12px) rotate(305deg); }
+}
 
 body {
     font-family: 'Inter', system-ui, sans-serif;
@@ -45,8 +50,3 @@ input, select, textarea, button {
     font: inherit;
 }
 
-@media (max-width: 1024px) {
-    aside {
-        display: none;
-    }
-}

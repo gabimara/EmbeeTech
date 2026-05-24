@@ -3,16 +3,19 @@
     <div class="absolute inset-0 bg-gradient-to-b from-purple-950/90 via-purple-950/70 to-purple-950/50 border-amber-400/20 rounded-[2rem]"></div>
     <div class="relative z-10 p-10 rounded-[5rem]">
         <div class="flex flex-col xl:flex-row items-start justify-between gap-10">
+            <?php if (!$currentUser): ?>
             <div class="max-w-3xl">
                 <span class="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-4 py-2 text-sm uppercase tracking-[0.2em] text-amber-400">Embee Tech</span>
                 <h1 class="mt-8 text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">Tecnologia com velocidade e alto impacto.</h1>
                 <p class="mt-6 max-w-2xl text-lg text-slate-300">Transformamos seu ambiente de TI com suporte técnico, formatação, instalação de software e consultorias inteligentes. Abra chamados, acompanhe tarefas e gerencie tudo via painel.</p>
                 <div class="mt-8 flex flex-col sm:flex-row gap-4">
                     <a href="index.php?page=tickets" class="rounded-full bg-amber-400 px-8 py-4 text-slate-950 font-semibold shadow-[0_0_30px_rgba(245,158,11,0.35)] hover:-translate-y-1 transition">Abrir chamado</a>
-                    <a href="#services" class="rounded-full border border-purple-600 px-8 py-4 text-slate-200 hover:border-amber-400 hover:text-amber-400 transition">Ver serviços</a>
+                    <a href="<?= $currentUser ? 'index.php?page=tickets' : '#services' ?>" class="rounded-full border border-purple-600 px-8 py-4 text-slate-200 hover:border-amber-400 hover:text-amber-400 transition">Ver serviços</a>
                 </div>
             </div>
-            <div class="hidden xl:block w-96 h-96 rounded-[3rem] border border-amber-400/20 bg-white/5 p-8 backdrop-blur-2xl shadow-[0_0_90px_rgba(245,158,11,0.12)]"></
+            <?php endif; ?>
+            <?php if ($currentUser): ?>
+            <div class="hidden xl:block w-96 h-96 rounded-[3rem] border border-amber-400/20 bg-white/5 p-8 backdrop-blur-2xl shadow-[0_0_90px_rgba(245,158,11,0.12)]">
                 <div class="h-full rounded-[2.5rem] bg-gradient-to-br from-amber-300/10 via-violet-500/10 to-slate-900/40 p-6">
                     <div class="mb-6 flex items-center justify-between rounded-3xl border border-white/10 bg-purple-950/60 p-4 backdrop-blur-md">
                         <div>
@@ -30,11 +33,12 @@
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
 
-<?php if ($page !== 'tickets'): ?>
+<?php if ($page !== 'tickets' && !$currentUser): ?>
 <section id="services" class="relative px-6 py-20 lg:px-16">
     <div class="max-w-6xl mx-auto">
         <div class="mb-12 text-center">
@@ -84,7 +88,42 @@
                             <span>Senha</span>
                             <input type="password" name="password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="••••••••" required>
                         </label>
-                        <button type="submit" class="w-full rounded-full bg-amber-400 px-6 py-4 font-semibold text-slate-950 hover:bg-amber-300 transition">Entrar</button>
+                        <div class="flex flex-col gap-4 sm:flex-row">
+                            <button type="submit" class="flex-1 rounded-full bg-amber-400 px-6 py-4 font-semibold text-slate-950 hover:bg-amber-300 transition">Entrar</button>
+                            <button id="showRegisterForm" type="button" class="flex-1 rounded-full border border-purple-700 bg-slate-900 px-6 py-4 text-slate-100 font-semibold hover:border-amber-400 transition">Cadastrar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="registerSection" class="mt-6 hidden rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+                    <h3 class="text-2xl font-bold text-white">Cadastro</h3>
+                    <p class="mt-2 text-slate-400">Crie sua conta e começe a abrir chamados agora mesmo.</p>
+                    <form action="index.php" method="post" class="mt-8 space-y-6">
+                        <input type="hidden" name="action" value="register">
+                        <div class="grid gap-6 md:grid-cols-2">
+                            <label class="block text-slate-300">
+                                <span>Nome completo</span>
+                                <input type="text" name="name" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="Seu nome" required>
+                            </label>
+                            <label class="block text-slate-300">
+                                <span>Email</span>
+                                <input type="email" name="email" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="seu@email.com" required>
+                            </label>
+                        </div>
+                        <div class="grid gap-6 md:grid-cols-2">
+                            <label class="block text-slate-300">
+                                <span>Senha</span>
+                                <input type="password" name="password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="••••••••" required>
+                            </label>
+                            <label class="block text-slate-300">
+                                <span>Confirmar senha</span>
+                                <input type="password" name="confirm_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="••••••••" required>
+                            </label>
+                        </div>
+                        <div class="flex flex-col gap-4 sm:flex-row">
+                            <button type="submit" class="flex-1 rounded-full bg-emerald-400 px-6 py-4 font-semibold text-slate-950 hover:bg-emerald-300 transition">Cadastrar</button>
+                            <button id="hideRegisterForm" type="button" class="flex-1 rounded-full border border-purple-700 bg-slate-900 px-6 py-4 text-slate-100 font-semibold hover:border-amber-400 transition">Voltar ao login</button>
+                        </div>
                     </form>
                 </div>
             <?php endif; ?>
@@ -179,8 +218,18 @@
     </div>
 
     <?php if ($currentUser): ?>
+    <?php $showArchived = isset($_GET['archived']) && $_GET['archived'] === '1'; ?>
     <div class="mt-16 overflow-x-auto rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
-        <h3 class="text-2xl font-bold text-white">Lista de chamados</h3>
+        <div class="flex items-center justify-between">
+            <h3 class="text-2xl font-bold text-white">Lista de chamados</h3>
+            <div>
+                <?php if ($showArchived): ?>
+                    <a href="index.php?page=tickets" class="rounded-full border border-purple-700 bg-slate-900 px-4 py-2 text-sm text-slate-200 hover:border-amber-400 transition">Voltar</a>
+                <?php else: ?>
+                    <a href="index.php?page=tickets&archived=1" class="rounded-full border border-purple-700 bg-slate-900 px-4 py-2 text-sm text-slate-200 hover:border-amber-400 transition">Mostrar arquivados</a>
+                <?php endif; ?>
+            </div>
+        </div>
         <div class="mt-6 min-w-full overflow-hidden rounded-3xl border border-purple-800">
             <table class="min-w-full text-left text-sm text-slate-300">
                 <thead class="bg-purple-950/95 text-slate-400">
@@ -191,6 +240,7 @@
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4">Abertura</th>
                         <th class="px-6 py-4">Proprietário</th>
+                        <th class="px-6 py-4">Ação</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800">
@@ -205,6 +255,34 @@
                             <td class="px-6 py-5 text-amber-400"><?= htmlspecialchars($ticket['status']) ?></td>
                             <td class="px-6 py-5"><?= htmlspecialchars($ticket['created_at']) ?></td>
                             <td class="px-6 py-5"><?= htmlspecialchars($ticket['owner_name']) ?></td>
+                            <?php
+                                $detailsText = $ticket['details'];
+                                $responseText = '';
+                                $markerPos = strpos($detailsText, "\n\nResposta do admin:");
+                                if ($markerPos === false) {
+                                    $markerPos = strpos($detailsText, "\n\nResposta de ");
+                                }
+                                if ($markerPos !== false) {
+                                    $responsePart = substr($detailsText, $markerPos + 2);
+                                    $detailsText = substr($detailsText, 0, $markerPos);
+                                    $responseText = trim($responsePart);
+                                }
+
+                                $ticketData = htmlspecialchars(json_encode([
+                                    'id' => $ticket['id'],
+                                    'title' => $ticket['title'],
+                                    'category' => $ticket['category_name'],
+                                    'service_type' => $ticket['service_type_name'],
+                                    'status' => $ticket['status'],
+                                    'created_at' => $ticket['created_at'],
+                                    'assigned_to' => $ticket['assigned_to'] ?? 'Administrador',
+                                    'details' => trim($detailsText),
+                                    'response' => trim($responseText),
+                                ], JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+                            ?>
+                            <td class="px-6 py-5">
+                                <button type="button" data-ticket='<?= $ticketData ?>' class="open-ticket-modal w-full rounded-3xl border border-purple-800 bg-purple-950/80 px-4 py-3 text-left text-slate-200 transition hover:bg-purple-900/90">Ver</button>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -213,3 +291,47 @@
     </div>
     <?php endif; ?>
 </section>
+
+<!-- User ticket modal (read-only) -->
+<?php if ($currentUser): ?>
+<div id="ticketModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4">
+    <div class="relative w-full max-w-3xl max-h-[90vh] overflow-hidden overflow-y-auto rounded-[2rem] border border-purple-800 bg-purple-950/95 p-6 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+        <button id="closeTicketModal" type="button" class="absolute right-5 top-5 rounded-full bg-purple-900/80 px-4 py-2 text-sm text-slate-200 hover:bg-purple-900 transition">Fechar</button>
+        <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Detalhes do chamado</p>
+                <h3 id="modalTicketTitle" class="mt-3 text-3xl font-extrabold text-white"></h3>
+            </div>
+            <div id="modalTicketStatus" class="rounded-full bg-amber-500/10 px-4 py-2 text-amber-200 text-sm"></div>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2 mb-6 text-slate-300">
+            <div>
+                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Categoria</p>
+                <p id="modalTicketCategory" class="mt-2 text-white"></p>
+            </div>
+            <div>
+                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Tipo de serviço</p>
+                <p id="modalTicketType" class="mt-2 text-white"></p>
+            </div>
+            <div>
+                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Abertura</p>
+                <p id="modalTicketCreatedAt" class="mt-2 text-white"></p>
+            </div>
+            <div>
+                <p class="text-sm uppercase tracking-[0.35em] text-slate-400">Atribuído</p>
+                <p id="modalTicketAssignedTo" class="mt-2 text-white"></p>
+            </div>
+        </div>
+        <div class="space-y-4 mb-6">
+            <div>
+                <p class="font-semibold text-white">Pedido</p>
+                <div id="modalTicketDetails" class="whitespace-pre-line mt-3 rounded-3xl border border-purple-800 bg-purple-900/80 p-4 text-slate-200"></div>
+            </div>
+            <div id="modalTicketResponseWrapper" class="hidden rounded-3xl border border-violet-600/20 bg-violet-500/5 p-4">
+                <p class="font-semibold text-violet-200">Resposta do admin</p>
+                <div id="modalTicketResponse" class="whitespace-pre-line mt-3 text-slate-200"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

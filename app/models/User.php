@@ -12,6 +12,25 @@ class User
         return $user ?: null;
     }
 
+    public static function create(array $data): ?int
+    {
+        $db = Database::connect();
+        $stmt = $db->prepare('INSERT INTO users (name, email, password_hash, role, created_at) VALUES (:name, :email, :password_hash, :role, NOW())');
+        $role = isset($data['role']) ? $data['role'] : 'user';
+        $success = $stmt->execute([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password_hash' => password_hash($data['password'], PASSWORD_DEFAULT),
+            'role' => $role,
+        ]);
+
+        if (!$success) {
+            return null;
+        }
+
+        return (int) $db->lastInsertId();
+    }
+
     public static function seedDefaults(): void
     {
         $db = Database::connect();
@@ -42,5 +61,23 @@ class User
         }
 
         return null;
+    }
+
+    public static function findById(int $id): ?array
+    {
+        $db = Database::connect();
+        $stmt = $db->prepare('SELECT * FROM users WHERE id = :id LIMIT 1');
+        $stmt->execute(['id' => $id]);
+        $user = $stmt->fetch();
+
+        return $user ?: null;
+    }
+
+    public static function getAdmins(): array
+    {
+        $db = Database::connect();
+        $stmt = $db->prepare('SELECT id, name, email FROM users WHERE role = :role ORDER BY name');
+        $stmt->execute(['role' => 'admin']);
+        return $stmt->fetchAll();
     }
 }
