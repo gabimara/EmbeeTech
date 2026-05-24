@@ -1,6 +1,17 @@
 <?php
 session_start();
 
+// Carregar variáveis de ambiente
+if (file_exists(__DIR__ . '/.env')) {
+    $env = parse_ini_file(__DIR__ . '/.env');
+    foreach ($env as $key => $value) {
+        putenv("{$key}={$value}");
+    }
+}
+
+// Carregar autoloader do Composer
+require_once __DIR__ . '/vendor/autoload.php';
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/app/core/Database.php';
 require_once __DIR__ . '/app/core/Controller.php';
@@ -54,6 +65,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'update_user_role') {
+        $homeController->updateUserRole();
+        exit;
+    }
+
+    if ($action === 'update_user_password') {
+        $homeController->updateUserPassword();
+        exit;
+    }
+
+    if ($action === 'delete_user') {
+        $homeController->deleteUser();
+        exit;
+    }
+
+    if ($action === 'change_password') {
+        $authController->changePassword();
+        exit;
+    }
+
+    if ($action === 'send_password_reset') {
+        $authController->sendPasswordReset();
+        exit;
+    }
+
+    if ($action === 'reset_password') {
+        $authController->resetPassword();
+        exit;
+    }
     if ($action === 'update_ticket') {
         $ticketController->update();
         exit;
@@ -71,6 +111,9 @@ switch ($page) {
         break;
     case 'admin':
         $homeController->admin($currentUser, $flashMessage, $flashError);
+        break;
+    case 'reset_password':
+        $authController->resetPasswordForm($currentUser, $flashMessage, $flashError);
         break;
     default:
         $homeController->index($currentUser, $flashMessage, $flashError);

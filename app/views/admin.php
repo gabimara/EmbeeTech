@@ -42,6 +42,74 @@
             </form>
         </div>
 
+        <div class="rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+            <h3 class="text-2xl font-bold text-white">Gerenciar cargos de usuários</h3>
+            <p class="mt-2 text-slate-400">Altere rapidamente a função de cada conta entre administrador e usuário.</p>
+            <div class="mt-6 overflow-x-auto">
+                <div id="adminActionMessage" class="mb-6 hidden rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-200"></div>
+                <table class="min-w-full text-left text-sm text-slate-300">
+                    <thead class="bg-purple-950/95 text-slate-400">
+                        <tr>
+                            <th class="px-6 py-4">Nome</th>
+                            <th class="px-6 py-4">Email</th>
+                            <th class="px-6 py-4">Cargo</th>
+                            <th class="px-6 py-4">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <?php foreach ($users as $user): ?>
+                            <tr class="hover:bg-purple-900/90 transition">
+                                <td class="px-6 py-4 font-semibold text-white"><?= htmlspecialchars($user['name']) ?></td>
+                                <td class="px-6 py-4"><?= htmlspecialchars($user['email']) ?></td>
+                                <td class="px-6 py-4 capitalize"><?= htmlspecialchars($user['role']) ?></td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <form action="index.php" method="post" class="flex items-center gap-3">
+                                            <input type="hidden" name="action" value="update_user_role">
+                                            <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
+                                            <select name="role" class="rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400">
+                                                <option value="user" <?= $user['role'] === 'user' ? 'selected' : '' ?>>Usuário</option>
+                                                <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Administrador</option>
+                                            </select>
+                                            <button type="submit" class="rounded-full bg-amber-400 px-4 py-3 text-slate-950 font-semibold hover:bg-amber-300 transition">Salvar</button>
+                                        </form>
+                                        <button type="button" data-toggle-password-row="<?= (int) $user['id'] ?>" class="rounded-full border border-purple-700 bg-slate-900 px-4 py-3 text-slate-200 font-semibold hover:border-amber-400 transition">Alterar senha</button>
+                                        <?php if ($user['id'] !== $currentUser['id']): ?>
+                                            <form action="index.php" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este usuário?');">
+                                                <input type="hidden" name="action" value="delete_user">
+                                                <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
+                                                <button type="submit" class="rounded-full bg-red-500 px-4 py-3 text-white font-semibold hover:bg-red-400 transition">Excluir</button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="passwordRow-<?= (int) $user['id'] ?>" class="hidden bg-purple-950/80">
+                                <td colspan="4" class="px-6 py-5">
+                                    <form action="index.php" method="post" class="grid gap-4 lg:grid-cols-3 items-end">
+                                        <input type="hidden" name="action" value="update_user_password">
+                                        <input type="hidden" name="user_id" value="<?= (int) $user['id'] ?>">
+                                        <label class="block text-slate-300">
+                                            <span>Nova senha</span>
+                                            <input type="password" name="new_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400" placeholder="Nova senha" required>
+                                        </label>
+                                        <label class="block text-slate-300">
+                                            <span>Confirmar senha</span>
+                                            <input type="password" name="confirm_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-4 py-3 text-slate-100 outline-none focus:border-amber-400" placeholder="Confirmar senha" required>
+                                        </label>
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <button type="submit" class="rounded-full bg-emerald-500 px-4 py-3 text-slate-950 font-semibold hover:bg-emerald-400 transition">Salvar nova senha</button>
+                                            <button type="button" data-toggle-password-row="<?= (int) $user['id'] ?>" class="rounded-full border border-purple-700 bg-slate-900 px-4 py-3 text-slate-200 font-semibold hover:border-amber-400 transition">Cancelar</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="grid gap-6 lg:grid-cols-2">
             <div class="rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
                 <h3 class="text-2xl font-bold text-white">Categorias</h3>

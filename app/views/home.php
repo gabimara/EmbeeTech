@@ -35,6 +35,31 @@
             </div>
             <?php endif; ?>
         </div>
+
+        <?php if ($currentUser): ?>
+            <div class="mt-10 rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+                <h3 class="text-2xl font-bold text-white">Alterar senha</h3>
+                <p class="mt-2 text-slate-400">Atualize sua senha para manter sua conta segura.</p>
+                <form action="index.php" method="post" class="mt-6 space-y-6">
+                    <input type="hidden" name="action" value="change_password">
+                    <div class="grid gap-6 md:grid-cols-3">
+                        <label class="block text-slate-300">
+                            <span>Senha atual</span>
+                            <input type="password" name="current_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="Senha atual" required>
+                        </label>
+                        <label class="block text-slate-300">
+                            <span>Nova senha</span>
+                            <input type="password" name="new_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="Nova senha" required>
+                        </label>
+                        <label class="block text-slate-300">
+                            <span>Confirmar senha</span>
+                            <input type="password" name="confirm_password" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="Confirmar nova senha" required>
+                        </label>
+                    </div>
+                    <button type="submit" class="rounded-full bg-amber-400 px-6 py-4 font-semibold text-slate-950 hover:bg-amber-300 transition">Salvar nova senha</button>
+                </form>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -91,6 +116,23 @@
                         <div class="flex flex-col gap-4 sm:flex-row">
                             <button type="submit" class="flex-1 rounded-full bg-amber-400 px-6 py-4 font-semibold text-slate-950 hover:bg-amber-300 transition">Entrar</button>
                             <button id="showRegisterForm" type="button" class="flex-1 rounded-full border border-purple-700 bg-slate-900 px-6 py-4 text-slate-100 font-semibold hover:border-amber-400 transition">Cadastrar</button>
+                        </div>
+                    </form>
+                    <p class="mt-4 text-sm text-slate-400">Esqueceu a senha? <button id="showForgotPasswordForm" type="button" class="text-amber-400 underline">Clique aqui</button></p>
+                </div>
+
+                <div id="forgotPasswordSection" class="mt-6 hidden rounded-[2rem] border border-purple-800 bg-purple-900/80 p-8 shadow-[0_0_80px_rgba(15,23,42,0.45)]">
+                    <h3 class="text-2xl font-bold text-white">Recuperar senha</h3>
+                    <p class="mt-2 text-slate-400">Digite seu email e enviaremos um link para redefinir sua senha.</p>
+                    <form action="index.php" method="post" class="mt-6 space-y-4">
+                        <input type="hidden" name="action" value="send_password_reset">
+                        <label class="block text-slate-300">
+                            <span>Email</span>
+                            <input type="email" name="email" class="mt-2 w-full rounded-3xl border border-purple-700 bg-purple-950 px-5 py-4 text-slate-100 outline-none focus:border-amber-400" placeholder="seu@email.com" required>
+                        </label>
+                        <div class="flex flex-col gap-4 sm:flex-row">
+                            <button type="submit" class="flex-1 rounded-full bg-amber-400 px-6 py-4 font-semibold text-slate-950 hover:bg-amber-300 transition">Enviar link</button>
+                            <button id="hideForgotPasswordForm" type="button" class="flex-1 rounded-full border border-purple-700 bg-slate-900 px-6 py-4 text-slate-100 font-semibold hover:border-amber-400 transition">Cancelar</button>
                         </div>
                     </form>
                 </div>

@@ -59,6 +59,7 @@ class HomeController extends Controller
         $categories = Ticket::getCategories();
         $serviceTypes = Ticket::getServiceTypes();
         $admins = User::getAdmins();
+        $users = User::getAll();
 
         $this->render('admin', [
             'currentUser' => $currentUser,
@@ -68,6 +69,7 @@ class HomeController extends Controller
             'categories' => $categories,
             'serviceTypes' => $serviceTypes,
             'admins' => $admins,
+            'users' => $users,
             'page' => 'admin',
         ]);
     }
@@ -114,6 +116,140 @@ class HomeController extends Controller
             $_SESSION['flash'] = 'Administrador criado com sucesso.';
         } else {
             $_SESSION['flash_error'] = 'Falha ao criar administrador. Verifique o log.';
+        }
+
+        header('Location: index.php?page=admin');
+        exit;
+    }
+
+    public function updateUserRole(): void
+    {
+        if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            $_SESSION['flash_error'] = 'Você precisa ser administrador para alterar cargos.';
+            header('Location: index.php');
+            exit;
+        }
+
+        $userId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $newRole = trim($_POST['role'] ?? '');
+
+        if (!$userId || !in_array($newRole, ['admin', 'user'], true)) {
+            $_SESSION['flash_error'] = 'Escolha um usuário válido e um cargo válido.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        if ($userId === $_SESSION['user']['id'] && $newRole !== 'admin') {
+            $_SESSION['flash_error'] = 'Não é permitido remover o seu próprio acesso de administrador.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        $success = User::updateRole($userId, $newRole);
+        $ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+        if ($ajax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'success' => (bool) $success,
+                'message' => $success ? 'Cargo atualizado com sucesso.' : 'Não foi possível alterar o cargo. Verifique os dados e tente novamente.',
+                'role' => $newRole,
+                'user_id' => $userId,
+            ]);
+            exit;
+        }
+
+        if ($success) {
+            $_SESSION['flash'] = 'Cargo atualizado com sucesso.';
+        } else {
+            $_SESSION['flash_error'] = 'Não foi possível alterar o cargo. Verifique os dados e tente novamente.';
+        }
+
+        header('Location: index.php?page=admin');
+        exit;
+    }
+
+    public function updateUserPassword(): void
+    {
+        if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            $_SESSION['flash_error'] = 'Você precisa ser administrador para alterar senhas de usuários.';
+            header('Location: index.php');
+            exit;
+        }
+
+        $userId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+        $newPassword = trim($_POST['new_password'] ?? '');
+        $confirmPassword = trim($_POST['confirm_password'] ?? '');
+
+        if (!$userId || !$newPassword || !$confirmPassword) {
+            $_SESSION['flash_error'] = 'Preencha todos os campos para alterar a senha.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            $_SESSION['flash_error'] = 'As senhas não coincidem.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        $user = User::findById($userId);
+        if (!$user) {
+            $_SESSION['flash_error'] = 'Usuário inválido.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        if (User::updatePassword($userId, $newPassword)) {
+            $_SESSION['flash'] = 'Senha alterada com sucesso para ' . htmlspecialchars($user['email']) . '.';
+        } else {
+            $_SESSION['flash_error'] = 'Não foi possível alterar a senha. Tente novamente.';
+        }
+
+        header('Location: index.php?page=admin');
+        exit;
+    }
+
+    public function deleteUser(): void
+    {
+        if (empty($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+            $_SESSION['flash_error'] = 'Você precisa ser administrador para excluir usuários.';
+            header('Location: index.php');
+            exit;
+        }
+
+        $userId = isset($_POST['user_id']) ? (int) $_POST['user_id'] : 0;
+
+        if (!$userId) {
+            $_SESSION['flash_error'] = 'Usuário inválido para exclusão.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        if ($userId === $_SESSION['user']['id']) {
+            $_SESSION['flash_error'] = 'Você não pode excluir sua própria conta enquanto estiver logado.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        $targetUser = User::findById($userId);
+        if (!$targetUser) {
+            $_SESSION['flash_error'] = 'Usuário não encontrado.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        if ($targetUser['role'] === 'admin' && User::countAdmins() <= 1) {
+            $_SESSION['flash_error'] = 'Não é possível excluir o último administrador.';
+            header('Location: index.php?page=admin');
+            exit;
+        }
+
+        $deleted = User::delete($userId);
+        if ($deleted) {
+            $_SESSION['flash'] = 'Usuário excluído com sucesso.';
+        } else {
+            $_SESSION['flash_error'] = 'Falha ao excluir o usuário. Tente novamente.';
         }
 
         header('Location: index.php?page=admin');

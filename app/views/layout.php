@@ -16,7 +16,9 @@
             <div class="flex items-center justify-between gap-4">
                 <a href="index.php" class="logo-link inline-flex items-center gap-3 text-amber-400">
                     <div class="text-2xl font-black tracking-tight">embee</div>
-                    <img src="img/logo.png" alt="Embee Tech" class="w-10 h-10 bee-icon">
+                    <span class="bee-wrapper inline-flex w-10 h-10">
+                        <img src="img/logo.png" alt="Embee Tech" class="w-full h-full bee-icon">
+                    </span>
                 </a>
                 <button id="mobileMenuToggle" class="rounded-3xl border border-purple-800 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 font-semibold">Menu</button>
             </div>
@@ -37,7 +39,9 @@
                     <a href="index.php" class="logo-link">
                         <div class="text-4xl font-black tracking-tight text-amber-400 relative inline-flex items-center">
                             embee
-                            <img src="img/logo.png" alt="Embee Tech" class="absolute top-0 left-full ml-2 w-12 h-12 bee-icon">
+                            <span class="absolute top-0 left-full ml-2 inline-flex w-12 h-12 bee-wrapper">
+                                <img src="img/logo.png" alt="Embee Tech" class="w-full h-full bee-icon">
+                            </span>
                         </div>
                         <div class="text-sm uppercase text-slate-400">tecnologia</div>
                     </a>

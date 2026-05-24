@@ -21,9 +21,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    document.querySelectorAll('.logo-link').forEach((link) => {
+        const beeWrapper = link.querySelector('.bee-wrapper');
+        if (!beeWrapper) {
+            return;
+        }
+
+        const restartBeeAnimation = (duration) => {
+            beeWrapper.style.animation = 'none';
+            // Force reflow to restart animation
+            void beeWrapper.offsetWidth;
+            beeWrapper.style.animation = `bee-flight ${duration}ms ease-in-out 1 forwards`;
+        };
+
+        restartBeeAnimation(2000);
+
+        link.addEventListener('mouseenter', () => {
+            restartBeeAnimation(2000);
+        });
+
+        link.addEventListener('mousemove', (event) => {
+            const rect = link.getBoundingClientRect();
+            const offsetX = (event.clientX - rect.left - rect.width / 2) * 0.12;
+            const offsetY = (event.clientY - rect.top - rect.height / 2) * 0.1;
+            beeWrapper.style.setProperty('--bee-hover-x', `${offsetX}px`);
+            beeWrapper.style.setProperty('--bee-hover-y', `${offsetY}px`);
+        });
+
+        link.addEventListener('mouseleave', () => {
+            beeWrapper.style.setProperty('--bee-hover-x', '0px');
+            beeWrapper.style.setProperty('--bee-hover-y', '0px');
+        });
+    });
+
     const registerSection = document.getElementById('registerSection');
     const showRegisterForm = document.getElementById('showRegisterForm');
     const hideRegisterForm = document.getElementById('hideRegisterForm');
+
+    const forgotPasswordSection = document.getElementById('forgotPasswordSection');
+    const showForgotPasswordForm = document.getElementById('showForgotPasswordForm');
+    const hideForgotPasswordForm = document.getElementById('hideForgotPasswordForm');
 
     if (showRegisterForm && registerSection) {
         showRegisterForm.addEventListener('click', () => {
@@ -38,6 +75,97 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
+
+    if (showForgotPasswordForm && forgotPasswordSection) {
+        showForgotPasswordForm.addEventListener('click', () => {
+            forgotPasswordSection.classList.toggle('hidden');
+            forgotPasswordSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+
+    if (hideForgotPasswordForm && forgotPasswordSection) {
+        hideForgotPasswordForm.addEventListener('click', () => {
+            forgotPasswordSection.classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    const adminRoleForms = document.querySelectorAll('form input[name="action"][value="update_user_role"]');
+    const adminActionMessage = document.getElementById('adminActionMessage');
+
+    const showAdminMessage = (message, isError = false) => {
+        if (!adminActionMessage) {
+            return;
+        }
+        adminActionMessage.textContent = message;
+        adminActionMessage.classList.toggle('border-rose-500/20', isError);
+        adminActionMessage.classList.toggle('border-emerald-500/20', !isError);
+        adminActionMessage.classList.toggle('bg-rose-500/10', isError);
+        adminActionMessage.classList.toggle('bg-emerald-500/10', !isError);
+        adminActionMessage.classList.toggle('text-rose-200', isError);
+        adminActionMessage.classList.toggle('text-emerald-200', !isError);
+        adminActionMessage.classList.remove('hidden');
+        setTimeout(() => {
+            if (adminActionMessage) {
+                adminActionMessage.classList.add('hidden');
+            }
+        }, 4000);
+    };
+
+    adminRoleForms.forEach((input) => {
+        const form = input.closest('form');
+        if (!form) {
+            return;
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const userId = formData.get('user_id');
+            const role = formData.get('role');
+            const row = form.closest('tr');
+            const roleCell = row ? row.querySelector('td:nth-child(3)') : null;
+
+            try {
+                const response = await fetch('index.php', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    if (roleCell && typeof role === 'string') {
+                        roleCell.textContent = role;
+                    }
+                    showAdminMessage(result.message || 'Cargo atualizado com sucesso.');
+                } else {
+                    showAdminMessage(result.message || 'Falha ao atualizar cargo.', true);
+                }
+            } catch (error) {
+                showAdminMessage('Erro ao enviar a solicitação. Tente novamente.', true);
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-toggle-password-row]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const userId = button.dataset.togglePasswordRow;
+            if (!userId) {
+                return;
+            }
+            const passwordRow = document.getElementById(`passwordRow-${userId}`);
+            if (!passwordRow) {
+                return;
+            }
+            passwordRow.classList.toggle('hidden');
+            if (!passwordRow.classList.contains('hidden')) {
+                passwordRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
 
     const ticketModal = document.getElementById('ticketModal');
     const closeTicketModal = document.getElementById('closeTicketModal');

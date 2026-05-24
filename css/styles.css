@@ -1,23 +1,36 @@
 /* Movimento em 8 da abelha */
-.bee-icon {
-    transform-origin: center;
-    animation: bee-flight 6s ease-in-out infinite;
+.bee-wrapper {
+    --bee-hover-x: 0px;
+    --bee-hover-y: 0px;
+    animation: bee-flight 2s ease-in-out 1 forwards;
     will-change: transform;
 }
 
-.logo-link:hover .bee-icon {
-    animation-duration: 3s;
+.logo-link:hover .bee-wrapper {
+    animation-duration: 2s;
+}
+
+.bee-icon {
+    width: 100%;
+    height: 100%;
+    transform: rotate(0deg);
+    transform-origin: center;
+    display: block;
+    position: absolute;
+    top: -2rem;
+    left: -7rem;
 }
 
 @keyframes bee-flight {
-    0%, 100% { transform: translate(0, 0) rotate(0deg); }
-    12.5% { transform: translate(18px, -12px) rotate(35deg); }
-    25% { transform: translate(36px, 0px) rotate(80deg); }
-    37.5% { transform: translate(18px, 12px) rotate(125deg); }
-    50% { transform: translate(0, 0) rotate(180deg); }
-    62.5% { transform: translate(-18px, -12px) rotate(215deg); }
-    75% { transform: translate(-36px, 0px) rotate(260deg); }
-    87.5% { transform: translate(-18px, 12px) rotate(305deg); }
+    0% { transform: translate(calc(var(--bee-hover-x, 0px) + 0px), calc(var(--bee-hover-y, 0px) + 0px)) rotate(0deg); }
+    25% { transform: translate(calc(var(--bee-hover-x, 0px) + 36px), calc(var(--bee-hover-y, 0px) + 0px)) rotate(90deg); }
+    40% { transform: translate(calc(var(--bee-hover-x, 0px) + 36px), calc(var(--bee-hover-y, 0px) + 2px)) rotate(100deg); }
+    55% { transform: translate(calc(var(--bee-hover-x, 0px) + 30px), calc(var(--bee-hover-y, 0px) + 16px)) rotate(120deg); }
+    70% { transform: translate(calc(var(--bee-hover-x, 0px) + 18px), calc(var(--bee-hover-y, 0px) + 22px)) rotate(150deg); }
+    85% { transform: translate(calc(var(--bee-hover-x, 0px) + 8px), calc(var(--bee-hover-y, 0px) + 14px)) rotate(180deg); }
+    90% { transform: translate(calc(var(--bee-hover-x, 0px) + 4px), calc(var(--bee-hover-y, 0px) + 4px)) rotate(270deg); }
+    95% { transform: translate(calc(var(--bee-hover-x, 0px) + 2px), calc(var(--bee-hover-y, 0px) + 2px)) rotate(300deg); }
+    100% { transform: translate(calc(var(--bee-hover-x, 0px) + 0px), calc(var(--bee-hover-y, 0px) + 0px)) rotate(360deg); }
 }
 
 body {
@@ -33,8 +46,8 @@ body {
 }
 
 .menu-link:hover {
-    background: rgba(168, 85, 247, 0.1);
-    box-shadow: inset 0 0 20px rgba(245, 158, 11, 0.1);
+    background: #a855f71a;
+    box-shadow: inset 0 0 20px #f59e0b1a;
 }
 
 @keyframes float {
